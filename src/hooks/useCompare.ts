@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import type { CompareResult } from '../types'
 import { compare } from '../services/api'
 
 export function useCompare() {
