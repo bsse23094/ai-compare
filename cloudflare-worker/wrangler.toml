@@ -1,0 +1,6 @@
+name = "ai-compare-worker"
+main = "./compare.ts"
+compatibility_date = "2025-12-03"
+
+# During deployment set secrets: GEMINI_API_KEY, GEMINI_MODEL (optional)
+# Example: `wrangler secret put GEMINI_API_KEY`
