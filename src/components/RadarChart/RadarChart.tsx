@@ -43,24 +43,24 @@ export default function RadarChart({ data }: Props) {
       {
         label: items[0],
         data: getScoresArray(items[0]),
-        backgroundColor: 'rgba(126, 231, 255, 0.2)',
-        borderColor: 'rgba(126, 231, 255, 1)',
-        borderWidth: 2,
-        pointBackgroundColor: 'rgba(126, 231, 255, 1)',
+        backgroundColor: 'rgba(99, 102, 241, 0.15)',
+        borderColor: 'rgba(99, 102, 241, 1)',
+        borderWidth: 1.5,
+        pointBackgroundColor: 'rgba(99, 102, 241, 1)',
         pointBorderColor: '#fff',
         pointHoverBackgroundColor: '#fff',
-        pointHoverBorderColor: 'rgba(126, 231, 255, 1)'
+        pointHoverBorderColor: 'rgba(99, 102, 241, 1)'
       },
       {
         label: items[1],
         data: getScoresArray(items[1]),
-        backgroundColor: 'rgba(255, 159, 252, 0.2)',
-        borderColor: 'rgba(255, 159, 252, 1)',
-        borderWidth: 2,
-        pointBackgroundColor: 'rgba(255, 159, 252, 1)',
+        backgroundColor: 'rgba(236, 72, 153, 0.15)',
+        borderColor: 'rgba(236, 72, 153, 1)',
+        borderWidth: 1.5,
+        pointBackgroundColor: 'rgba(236, 72, 153, 1)',
         pointBorderColor: '#fff',
         pointHoverBackgroundColor: '#fff',
-        pointHoverBorderColor: 'rgba(255, 159, 252, 1)'
+        pointHoverBorderColor: 'rgba(236, 72, 153, 1)'
       }
     ]
   }
@@ -71,16 +71,16 @@ export default function RadarChart({ data }: Props) {
     scales: {
       r: {
         angleLines: {
-          color: 'rgba(255, 255, 255, 0.1)'
+          color: 'rgba(255, 255, 255, 0.06)'
         },
         grid: {
-          color: 'rgba(255, 255, 255, 0.1)'
+          color: 'rgba(255, 255, 255, 0.06)'
         },
         pointLabels: {
-          color: '#9aa4b2',
+          color: '#8892a6',
           font: {
-            family: 'Syncopate, sans-serif',
-            size: 10
+            family: 'Kumbh Sans, sans-serif',
+            size: 9
           }
         },
         ticks: {
@@ -96,12 +96,13 @@ export default function RadarChart({ data }: Props) {
       legend: {
         position: 'bottom' as const,
         labels: {
-          color: '#9aa4b2',
+          color: '#8892a6',
           font: {
-            family: 'Syncopate, sans-serif',
-            size: 11
+            family: 'Kumbh Sans, sans-serif',
+            size: 9
           },
-          padding: 20
+          padding: 12,
+          boxWidth: 10
         }
       }
     }

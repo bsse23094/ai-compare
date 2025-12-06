@@ -41,52 +41,73 @@ export default {
 
       const model = env.GEMINI_MODEL || 'gemini-2.0-flash'
 
-      const systemPrompt = `You are a concise comparison engine. Output ONLY valid JSON with no extra text.
+      // Randomize item order to prevent position bias
+      const shuffled = Math.random() > 0.5 ? [items[0], items[1]] : [items[1], items[0]]
+      const itemA = shuffled[0]
+      const itemB = shuffled[1]
 
-CRITICAL RULES:
-1. Choose 4-5 comparison attributes that are RELEVANT to what is being compared:
-   - For tech products: Performance, Design, Price, Features, Value
-   - For fictional characters: Power, Intelligence, Charisma, Combat Skills, Popularity  
-   - For athletes: Skill, Achievements, Impact, Consistency, Legacy
-   - For food: Taste, Nutrition, Cost, Availability, Versatility
-   - For programming tools: Performance, Ease of Use, Community, Documentation, Flexibility
-   - For concepts/abstract things: choose the most meaningful comparison criteria
-   
-2. NEVER use irrelevant attributes (e.g., don't use "Price" for anime characters)
+      const systemPrompt = `You are a STRICTLY NEUTRAL and UNBIASED comparison engine. Output ONLY valid JSON.
 
-3. You MUST pick a winner. Analyze the scores and declare a clear winner.
+CRITICAL ANTI-BIAS RULES:
+1. You MUST evaluate BOTH items with EQUAL scrutiny and fairness
+2. Do NOT favor the first item mentioned - position should have ZERO influence
+3. Do NOT favor popular/mainstream options over lesser-known ones
+4. Base scores PURELY on objective merits, not popularity or brand recognition
+5. If items are roughly equal, scores should reflect that (close scores are OK)
+6. A tie is acceptable if items are genuinely comparable - set winner to "Tie"
+7. Give EQUAL weight to pros and cons for BOTH items
+8. Do NOT use leading language that favors one item
 
-4. Use this exact JSON schema:
+ATTRIBUTE SELECTION (choose 4-5 RELEVANT ones):
+- Tech products: Performance, Design, Price, Features, Value
+- Fictional characters: Power, Intelligence, Charisma, Combat Skills, Popularity  
+- Athletes: Skill, Achievements, Impact, Consistency, Legacy
+- Food: Taste, Nutrition, Cost, Availability, Versatility
+- Programming tools: Performance, Ease of Use, Community, Documentation, Flexibility
+- Other: Choose the most meaningful, NEUTRAL comparison criteria
+
+NEVER use irrelevant attributes (e.g., don't use "Price" for anime characters)
+
+JSON SCHEMA (follow exactly):
 {
-  "items": ["item1", "item2"],
-  "attributes": ["Attr1", "Attr2", "Attr3", "Attr4"],
+  "items": ["${itemA}", "${itemB}"],
+  "attributes": ["Attr1", "Attr2", "Attr3", "Attr4", "Attr5"],
   "scores": {
-    "item1": { "Attr1": 85, "Attr2": 90, ... },
-    "item2": { "Attr1": 78, "Attr2": 92, ... }
+    "${itemA}": { "Attr1": 85, "Attr2": 90, ... },
+    "${itemB}": { "Attr1": 88, "Attr2": 87, ... }
   },
   "pros": {
-    "item1": { "Attr1": ["pro1", "pro2"], ... },
-    "item2": { "Attr1": ["pro1"], ... }
+    "${itemA}": { "Attr1": ["pro1", "pro2"], ... },
+    "${itemB}": { "Attr1": ["pro1", "pro2"], ... }
   },
   "cons": {
-    "item1": { "Attr1": ["con1"], ... },
-    "item2": { "Attr1": ["con1", "con2"], ... }
+    "${itemA}": { "Attr1": ["con1"], ... },
+    "${itemB}": { "Attr1": ["con1"], ... }
   },
-  "winner": "item1",
-  "winnerReason": "Brief 1-sentence explanation of why this item wins overall",
-  "summary": "1-2 sentence neutral comparison summary",
-  "confidence": 85,
+  "winner": "${itemA}" or "${itemB}" or "Tie",
+  "winnerReason": "Brief objective explanation based on scores",
+  "summary": "Neutral 1-2 sentence comparison without favoring either",
+  "confidence": 75,
   "sources": ["source info"]
 }
 
-Scores are integers 0-100. Be fair and objective.`
+Scores are integers 0-100. Be FAIR, OBJECTIVE, and UNBIASED.`
 
-      const userPrompt = `Compare: "${items[0]}" vs "${items[1]}"
+      const userPrompt = `Compare these two items with COMPLETE NEUTRALITY: "${itemA}" vs "${itemB}"
 
-First, determine what TYPE of things these are (products, characters, people, food, concepts, etc.).
-Then choose 4-5 attributes that make sense for comparing these specific items.
-Provide scores, pros, cons for each attribute.
-Pick a winner based on overall scores and provide a reason.
+IMPORTANT: Evaluate both items equally. Do not favor either one based on:
+- Order of mention (first vs second)
+- Popularity or mainstream appeal
+- Personal preferences
+
+Steps:
+1. Identify the category (products, characters, people, food, concepts, etc.)
+2. Choose 4-5 RELEVANT and NEUTRAL attributes
+3. Score BOTH items fairly (0-100) for each attribute
+4. List 2-3 pros AND 2-3 cons for EACH item (balanced coverage)
+5. Determine winner SOLELY from the scores, or declare "Tie" if within 3 points average
+6. Write a neutral summary that doesn't favor either item
+
 Return ONLY the JSON.`
 
       const combinedPrompt = `${systemPrompt}\n\n${userPrompt}`
@@ -140,9 +161,15 @@ Return ONLY the JSON.`
         }
       }
 
-      // Basic validation of parsed result shape
+      // Basic validation of parsed result shape - restore original item order
       if (!parsed.items) parsed.items = items
       if (!parsed.attributes) parsed.attributes = ['Overall']
+      
+      // Ensure items are in original order for consistent frontend display
+      if (parsed.items[0] !== items[0]) {
+        parsed.items = [items[0], items[1]]
+      }
+      
       if (!parsed.winner) {
         // Calculate winner from scores if not provided
         const item0 = items[0]
@@ -151,8 +178,15 @@ Return ONLY the JSON.`
         const scores1 = parsed.scores?.[item1] || {}
         const avg0 = Object.values(scores0).reduce((a: number, b: any) => a + (b || 0), 0) / Math.max(Object.keys(scores0).length, 1)
         const avg1 = Object.values(scores1).reduce((a: number, b: any) => a + (b || 0), 0) / Math.max(Object.keys(scores1).length, 1)
-        parsed.winner = avg0 >= avg1 ? item0 : item1
-        parsed.winnerReason = `${parsed.winner} has a higher average score across all attributes.`
+        
+        // If within 3 points, declare a tie
+        if (Math.abs(avg0 - avg1) <= 3) {
+          parsed.winner = "Tie"
+          parsed.winnerReason = "Both items are nearly equal in overall performance."
+        } else {
+          parsed.winner = avg0 > avg1 ? item0 : item1
+          parsed.winnerReason = `${parsed.winner} has a higher average score across all attributes.`
+        }
       }
 
       return jsonResponse({ ok: true, result: parsed })

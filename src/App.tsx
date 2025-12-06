@@ -1,7 +1,10 @@
 import { useState, useRef } from 'react'
 import './App.css'
-import FloatingLines from './components/FloatingLines/FloatingLines'
+import LiquidEther from './components/LiquidEther/LiquidEther'
 import RadarChart from './components/RadarChart/RadarChart'
+import BarChart from './components/BarChart/BarChart'
+import ScoreDonut from './components/ScoreDonut/ScoreDonut'
+import { Trophy, Download, Zap } from 'lucide-react'
 import html2canvas from 'html2canvas'
 
 const QUICK_COMPARES = [
@@ -97,23 +100,28 @@ function App() {
     <div className="app">
       <section className="hero">
         <div className="hero__bg">
-          <FloatingLines
-            enabledWaves={['top', 'middle', 'bottom']}
-            lineCount={[8, 10, 12]}
-            lineDistance={[7, 6, 5]}
-            bendRadius={4.0}
-            bendStrength={-0.3}
-            interactive={true}
-            parallax={true}
-            animationSpeed={0.4}
-            linesGradient={['#9a2fb3', '#b040b0', '#1e3a70', '#0099bb']}
-            mixBlendMode="normal"
+          <LiquidEther
+            colors={['#5227FF', '#FF9FFC', '#B19EEF']}
+            mouseForce={20}
+            cursorSize={100}
+            isViscous={false}
+            viscous={30}
+            iterationsViscous={32}
+            iterationsPoisson={32}
+            resolution={0.5}
+            isBounce={false}
+            autoDemo={true}
+            autoSpeed={0.5}
+            autoIntensity={2.2}
+            takeoverDuration={0.25}
+            autoResumeDelay={3000}
+            autoRampDuration={0.6}
           />
         </div>
 
         <div className="hero__content">
-          <h1 className="hero__title">compare anything</h1>
-          <p className="hero__subtitle">AI-powered comparisons in seconds. No sign-up required.</p>
+          <h1 className="hero__title">Compare</h1>
+          <p className="hero__subtitle">AI-powered comparisons</p>
 
           <form className="compare-form" onSubmit={handleSubmit}>
             <div className="compare-form__inputs">
@@ -138,7 +146,14 @@ function App() {
               className="compare-form__btn"
               disabled={loading || !itemA.trim() || !itemB.trim()}
             >
-              {loading ? 'Analyzing...' : 'Compare Now'}
+              {loading ? (
+                <>
+                  <Zap size={16} />
+                  Analyzing
+                </>
+              ) : (
+                'Compare'
+              )}
             </button>
           </form>
 
@@ -160,13 +175,13 @@ function App() {
       {loading && (
         <div className="loading">
           <div className="loading__spinner" />
-          <p className="loading__text">Analyzing with AI...</p>
+          <p className="loading__text">Analyzing</p>
         </div>
       )}
 
       {error && (
         <div className="error">
-          <p>⚠️ {error}</p>
+          <p>{error}</p>
           <button className="error__retry" onClick={() => handleCompare()}>Try Again</button>
         </div>
       )}
@@ -176,7 +191,12 @@ function App() {
           <div className="results__grid">
             {/* Item A Card */}
             <div className={`results__card results__card--a ${result.winner === result.items[0] ? 'results__card--winner' : ''}`}>
-              {result.winner === result.items[0] && <div className="winner-badge">🏆 WINNER</div>}
+              {result.winner === result.items[0] && (
+                <div className="winner-badge">
+                  <Trophy size={14} />
+                  WINNER
+                </div>
+              )}
               <h3 className="results__card-title">{result.items[0]}</h3>
               <div className="results__scores">
                 {result.attributes.map((attr) => (
@@ -210,9 +230,14 @@ function App() {
               )}
             </div>
 
-            {/* Center - Radar + Verdict */}
+            {/* Center - Charts + Verdict */}
             <div className="results__center">
               <RadarChart data={result} />
+
+              <div className="charts-grid">
+                <BarChart data={result} />
+                <ScoreDonut data={result} />
+              </div>
 
               <div className="verdict-card">
                 {result.winner && (
@@ -240,13 +265,19 @@ function App() {
               </div>
 
               <button className="export-btn" onClick={handleExport}>
-                📸 Export as PNG
+                <Download size={16} />
+                Export
               </button>
             </div>
 
             {/* Item B Card */}
             <div className={`results__card results__card--b ${result.winner === result.items[1] ? 'results__card--winner' : ''}`}>
-              {result.winner === result.items[1] && <div className="winner-badge">🏆 WINNER</div>}
+              {result.winner === result.items[1] && (
+                <div className="winner-badge">
+                  <Trophy size={14} />
+                  WINNER
+                </div>
+              )}
               <h3 className="results__card-title">{result.items[1]}</h3>
               <div className="results__scores">
                 {result.attributes.map((attr) => (
