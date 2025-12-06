@@ -613,10 +613,13 @@ body {
 
   .hero__title {
     font-size: 2.5rem;
+    font-weight: 300;
+    letter-spacing: 0.05em;
   }
 
   .hero__subtitle {
     margin-bottom: 32px;
+    font-size: 0.8rem;
   }
 
   .hero__content {
@@ -625,11 +628,12 @@ body {
 
   .compare-form__input {
     padding: 12px 14px;
-    font-size: 0.875rem;
+    font-size: 0.8rem;
   }
 
   .compare-form__btn {
     padding: 12px 20px;
+    font-size: 0.8rem;
   }
 
   .quick-chips {
@@ -651,19 +655,48 @@ body {
 
   .results__card {
     padding: 16px;
+    border-radius: 2px;
   }
 
   .results__card-title {
-    font-size: 1.1rem;
+    font-size: 1rem;
+    font-weight: 300;
+  }
+
+  .results__score-label {
+    font-size: 0.75rem;
+  }
+
+  .results__score-value {
+    font-size: 0.8rem;
+  }
+
+  .results__pros-list li,
+  .results__cons-list li {
+    font-size: 0.75rem;
   }
 
   .verdict-card {
     padding: 16px;
   }
 
+  .verdict-card__winner-name {
+    font-size: 1.1rem;
+  }
+
+  .verdict-card__summary {
+    font-size: 0.8rem;
+  }
+
   .bar-chart,
   .score-donut {
     padding: 16px;
+  }
+
+  .bar-chart__title,
+  .score-donut__title {
+    font-size: 0.65rem;
+    margin-bottom: 12px;
   }
 
   .score-donut__chart {
@@ -687,6 +720,10 @@ body {
   .score-donut__item-score {
     font-size: 0.8rem;
   }
+
+  .score-donut__diff-value {
+    font-size: 0.9rem;
+  }
 }
 
 @media (max-width: 400px) {
@@ -695,17 +732,22 @@ body {
   }
 
   .hero__title {
-    font-size: 2rem;
+    font-size: 1.8rem;
+    font-weight: 300;
+  }
+
+  .hero__subtitle {
+    font-size: 0.75rem;
   }
 
   .compare-form__input {
     padding: 11px 12px;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
   }
 
   .compare-form__btn {
     padding: 11px 16px;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
   }
 
   .quick-chip {
@@ -721,9 +763,44 @@ body {
     padding: 14px;
   }
 
+  .results__card-title {
+    font-size: 0.95rem;
+  }
+
+  .results__score-label {
+    font-size: 0.7rem;
+  }
+
+  .results__score-value {
+    font-size: 0.75rem;
+  }
+
+  .results__pros-list li,
+  .results__cons-list li {
+    font-size: 0.7rem;
+    padding-left: 14px;
+  }
+
+  .verdict-card {
+    padding: 14px;
+  }
+
+  .verdict-card__winner-name {
+    font-size: 1rem;
+  }
+
+  .verdict-card__summary {
+    font-size: 0.75rem;
+  }
+
   .bar-chart,
   .score-donut {
     padding: 14px;
+  }
+
+  .bar-chart__title,
+  .score-donut__title {
+    font-size: 0.6rem;
   }
 
   .score-donut__chart {
@@ -731,7 +808,30 @@ body {
     height: 60px;
   }
 
+  .score-donut__item-name {
+    font-size: 0.65rem;
+    max-width: 80px;
+  }
+
+  .score-donut__item-score {
+    font-size: 0.75rem;
+  }
+
   .score-donut__diff-value {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+  }
+
+  .score-donut__diff-label {
+    font-size: 0.6rem;
+  }
+
+  .winner-badge {
+    font-size: 0.65rem;
+    padding: 3px 10px;
+  }
+
+  .export-btn {
+    padding: 10px 16px;
+    font-size: 0.75rem;
   }
 }
