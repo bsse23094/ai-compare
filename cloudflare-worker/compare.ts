@@ -39,7 +39,7 @@ export default {
         return jsonResponse({ ok: false, error: 'Server misconfigured: missing GEMINI_API_KEY' }, 500)
       }
 
-      const model = env.GEMINI_MODEL || 'gemini-2.0-flash'
+      const model = env.GEMINI_MODEL || 'gemini-2.5-flash'
 
       // Randomize item order to prevent position bias
       const shuffled = Math.random() > 0.5 ? [items[0], items[1]] : [items[1], items[0]]
@@ -118,7 +118,7 @@ Return ONLY the JSON.`
         }],
         generationConfig: {
           temperature: 0.2,
-          maxOutputTokens: 800,
+          maxOutputTokens: 4096,
           responseMimeType: 'application/json'
         }
       }
@@ -133,7 +133,23 @@ Return ONLY the JSON.`
 
       if (!resp.ok) {
         const errorText = await resp.text()
-        return jsonResponse({ ok: false, error: 'LLM error', details: errorText }, 502)
+        console.error('Gemini API Error:', errorText)
+        
+        // Parse error to provide better user feedback
+        try {
+          const errorJson = JSON.parse(errorText)
+          if (errorJson.error?.code === 429) {
+            return jsonResponse({ 
+              ok: false, 
+              error: 'API quota exceeded. Please try again in a few moments.',
+              retryAfter: 15
+            }, 429)
+          }
+        } catch (e) {
+          // error text not JSON, continue
+        }
+        
+        return jsonResponse({ ok: false, error: 'LLM service unavailable', details: errorText }, 502)
       }
 
       const json = await resp.json()
