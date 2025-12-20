@@ -5,8 +5,12 @@ export async function compare(items: string[], attributes?: string[], retries = 
     try {
       const resp = await fetch(base, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items, attributes })
+        headers: { 
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache'
+        },
+        body: JSON.stringify({ items, attributes }),
+        cache: 'no-store'
       })
       
       const json = await resp.json()
