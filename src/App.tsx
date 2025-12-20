@@ -6,6 +6,7 @@ import BarChart from './components/BarChart/BarChart'
 import ScoreDonut from './components/ScoreDonut/ScoreDonut'
 import { Trophy, Download, Zap } from 'lucide-react'
 import html2canvas from 'html2canvas'
+import { compare } from './services/api'
 
 const QUICK_COMPARES = [
   { a: 'iPhone 15', b: 'Galaxy S24' },
@@ -47,14 +48,7 @@ function App() {
     setResult(null)
 
     try {
-      const workerUrl = import.meta.env.VITE_WORKER_URL || '/api/compare'
-      const resp = await fetch(workerUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items: [compareA.trim(), compareB.trim()] })
-      })
-
-      const json = await resp.json()
+      const json = await compare([compareA.trim(), compareB.trim()])
 
       if (!json.ok) {
         throw new Error(json.error || 'Comparison failed')
